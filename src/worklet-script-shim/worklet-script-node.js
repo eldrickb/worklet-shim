@@ -8,20 +8,28 @@ class WorkletScriptNode extends AudioWorkletNode {
    * @param {BaseAudioContext} context The associated BaseAudioContext.
    * @param 
    */
-  constructor(context, bufferSize, numInput, numOutput, processorName, options) {
-    super(context, processorName, {
-      ...options,
+  constructor(context, bufferSize, numInput, numOutput, options) {
+
+    // TODO merge options better
+
+    const thisOptions = {
+      
       processorOptions: {
         bufferSize,
+        sampleRate: context.sampleRate,
         numInput,
-        numOutput
+        numOutput,
       }
+    }
+
+    super(context, "worklet-script-processor", {
+      ...options,
+      ...thisOptions
     });
   }
 }
 
-async function createWorkletScriptNode(context, bufferSize, numInput, numOutput, processFunction, options) {
-
+async function createWorkletScriptNode(context, processFunction, bufferSize, options, numInput, numOutput) {
     const processorName = "worklet-script-processor";
 
     // Prepare processor string
@@ -29,7 +37,7 @@ async function createWorkletScriptNode(context, bufferSize, numInput, numOutput,
 
     await context.audioWorklet.addModule(processorURL);
 
-    return new WorkletScriptNode(context, bufferSize, numInput, numOutput, processorName, options);
+    return new WorkletScriptNode(context, bufferSize, numInput, numOutput, options);
 }
 
 

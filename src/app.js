@@ -48,8 +48,6 @@ async function init() {
   const inputGain = context.createGain();
   const medianEnd = context.createGain();
 
-  setupMonitor(monitorNode);
-  setupRecording(recordBuffer);
 
   micSourceNode
       .connect(inputGain)
@@ -64,7 +62,7 @@ async function setupScriptProcessor(recordBuffer) {
   let scriptNode = await createWorkletScriptNode(context, 128, 2, 2, (event) => {
     console.log("Real audio process called")
     console.log(event)
-    console.log(event.inputBuffer.getChannelData(channel))
+    console.log(event.inputBuffer[0])
   });
 
   return scriptNode
